@@ -14,23 +14,25 @@ pip3 install -r requirements.txt
 ### 学習画像の用意
 以下のような感じで各ファイルが配置されていること  
 データセットフォルダ  
+- dataset
 ```
 dataset
 ├── Eevee
-    ├── Picture1.jpg
-    └── Picture2.png
+│   ├── Picture1.jpg
+│   └── Picture2.png
 ├── Jolteon
-    ├── Picture1.jpg
-    └── Picture2.png
+│   ├── Picture1.jpg
+│   └── Picture2.png
 ├── Vaporeon
-    ├── Picture1.jpg
-    └── Picture2.png
+│   ├── Picture1.jpg
+│   └── Picture2.png
 └── Flareon
     ├── Picture1.jpg
     └── Picture2.png
 ```
 
 ラベルファイル  
+- label.txt  
 ```
 Eevee
 Jolteon
