@@ -1,0 +1,5 @@
+/dataset/*
+/weight/*
+*.json
+*.npz
+**/.DS_Store
