@@ -1,11 +1,49 @@
 #! python3
 
-import sys
+from pathlib import Path
+import argparse
 
-# 入力値チェック
-if len(sys.argv) < 2:
-    print('Usage: python3 {} filepath'.format(sys.argv[0]))
-    quit()
+# 引数のパーシング
+parser = argparse.ArgumentParser(description='predict image on target device api with NNVM/TVM')
+parser.add_argument('filepath', help='image file path', nargs='+')
+parser.add_argument('-l', '--label', help='label text file (default ./label.txt)')
+parser.add_argument('-m', '--model', help='load model json (default ./model.json)')
+parser.add_argument('-w', '--weight', help='load weight directory (default ./weight)')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('--opencl', action='store_true', help='Target API OpenCL (default)')
+group.add_argument('--llvm', action='store_true', help='Target API LLVM CPU')
+group.add_argument('--cuda', action='store_true', help='Target API CUDA')
+group.add_argument('--metal', action='store_true', help='Target API Metal')
+group.add_argument('--opengl', action='store_true', help='Target API OpenGL')
+group.add_argument('--vulkan', action='store_true', help='Target API Vulkan')
+args = parser.parse_args()
+
+# データパス
+LABEL_FILE = 'label.txt'
+MODEL_NAME = 'model.json'
+WEIGHT_DIR = 'weight'
+TARGET_LIST = ['opencl', 'llvm', 'cuda', 'metal', 'opengl', 'vulkan']
+TARGET = TARGET_LIST[0]
+
+if args.label:
+    LABEL_FILE = args.label
+if args.model:
+    MODEL_NAME = args.model
+if args.weight:
+    WEIGHT_DIR = args.weight
+
+if args.opencl:
+    TARGET = TARGET_LIST[0]
+if args.llvm:
+    TARGET = TARGET_LIST[1]
+if args.cuda:
+    TARGET = TARGET_LIST[2]
+if args.metal:
+    TARGET = TARGET_LIST[3]
+if args.opengl:
+    TARGET = TARGET_LIST[4]
+if args.vulkan:
+    TARGET = TARGET_LIST[5]
 
 
 import nnvm
@@ -19,14 +57,6 @@ from keras.models import model_from_json
 # from keras.applications.inception_v3 import preprocess_input
 # from keras.applications.vgg19 import preprocess_input
 from keras.applications.resnet50 import preprocess_input
-
-
-# データパス
-LABEL_FILE = 'label.txt'
-MODEL_NAME = 'model.json'
-WEIGHT_DIR = 'weight'
-TARGET_LIST = ['opencl', 'llvm', 'cuda', 'metal', 'opengl', 'vulkan']
-TARGET = TARGET_LIST[0]
 
 
 # ラベルのロード
@@ -63,7 +93,7 @@ m = graph_runtime.create(graph, lib, ctx)
 
 
 # 画像から入力データを作成
-for img_path in sys.argv[1:]:
+for img_path in args.filepath:
     # 入力データのセット
     img = image.load_img(img_path, target_size=(224, 224))
     x = image.img_to_array(img)

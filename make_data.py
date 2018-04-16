@@ -2,17 +2,35 @@
 
 from progressbar import ProgressBar
 from pathlib import Path
+import argparse
 import numpy as np
+
+# 引数のパーシング
+parser = argparse.ArgumentParser(description='make dataset')
+parser.add_argument('-d', '--dir', help='path to dataset directory (default ./dataset)')
+parser.add_argument('-l', '--label', help='label text file (default ./label.txt)')
+parser.add_argument('-o', '--output', help='save numpy file (.npz) name (default ./dataset.npz)')
+parser.add_argument('-s', '--size', help='resizze image (default 224)', type=int)
+args = parser.parse_args()
+
+# 学習データの設定
+DATA_DIR = './dataset'
+LABEL_FILE = './label.txt'
+SAVE_NAME = './dataset.npz'
+IMG_SIZE = 224
+
+if args.dir:
+    DATA_DIR = args.dir
+if args.label:
+    LABEL_FILE = args.label
+if args.output:
+    SAVE_NAME = args.output
+if args.size:
+    IMG_SIZE = args.size
 
 import keras
 from keras.utils import np_utils
 from keras.preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
-
-# 学習データの設定
-DATA_DIR = 'dataset'
-LABEL_FILE = 'label.txt'
-SAVE_NAME = 'dataset.npz'
-IMG_SIZE = 224
 
 # ラベルの読み込み
 LABEL_DATA = []

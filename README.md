@@ -42,26 +42,26 @@ Flareon
 
 学習用データセットの生成  
 ```
-python3 make_data.py
+python3 make_data.py --dir ./dataset --label ./label.txt --output ./dataset.npz
 ```
 
 
 ### 学習
 ```
-python3 train_network.py
+python3 train_network.py --dataset ./dataset.npz --label ./label.txt --model ./model.json --weight weight.hdf5 --output ./weight --batch 128 --epoch 20
 ```
 
 
 ### 推論
 ```
-python3 predict.py <画像ファイルパス>
+python3 predict.py --label ./label.txt --model ./model.json --weight ./weight <画像ファイルパス>
 ```
 
 
 ### 推論(NNVM)
 別途NNVMとTVM環境の用意が必要  
 ```
-python3 predict_nnvm.py <画像ファイルパス>
+python3 predict_nnvm.py --label ./label.txt --model ./model.json --weight ./weight --opencl <画像ファイルパス>
 ```
 
 

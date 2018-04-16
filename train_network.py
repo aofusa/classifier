@@ -1,10 +1,46 @@
 #! python3
 
-# import plaidml.keras
-# plaidml.keras.install_backend()
-
 import numpy as np
 from pathlib import Path
+import argparse
+
+# 引数のパーシング
+parser = argparse.ArgumentParser(description='train network')
+parser.add_argument('-d', '--dataset', help='path to dataset (default ./dataset.npz)')
+parser.add_argument('-l', '--label', help='label text file (default ./label.txt)')
+parser.add_argument('-m', '--model', help='save model json name (default ./model.json)')
+parser.add_argument('-w', '--weight', help='save weight hdf5 name (default ./weight.hdf5)')
+parser.add_argument('-o', '--output', help='save weight output directory (default ./weight)')
+parser.add_argument('-b', '--batch', help='batch size (default 128)', type=int)
+parser.add_argument('-e', '--epoch', help='num epochs (default 20)', type=int)
+args = parser.parse_args()
+
+# 学習データのパス
+DATASET_FILE = 'dataset.npz'
+LABEL_FILE = 'label.txt'
+MODEL_NAME = 'model.json'
+WEIGHT_NAME = 'weight.hdf5' #'weights.{epoch:02d}-{val_loss:.2f}.hdf5'
+WEIGHT_DIR = 'weight'
+BATCH_SIZE = 128
+EPOCH = 20
+
+if args.dataset:
+    DATASET_FILE = args.dataset
+if args.label:
+    LABEL_FILE = args.label
+if args.model:
+    MODEL_NAME = args.model
+if args.weight:
+    WEIGHT_NAME = args.weight
+if args.output:
+    WEIGHT_DIR = args.output
+if args.batch:
+    BATCH_SIZE = args.batch
+if args.epoch:
+    EPOCH = args.epoch
+
+# import plaidml.keras
+# plaidml.keras.install_backend()
 
 import keras
 from keras.models import Model
@@ -20,17 +56,6 @@ from keras.models import model_from_json
 # from keras.applications.vgg19 import preprocess_input
 from keras.applications.resnet50 import ResNet50
 from keras.applications.resnet50 import preprocess_input
-
-
-# 学習データのパス
-LABEL_FILE = 'label.txt'
-DATASET_FILE = 'dataset.npz'
-MODEL_NAME = 'model.json'
-WEIGHT_DIR = 'weight'
-WEIGHT_NAME = 'weight.hdf5' #'weights.{epoch:02d}-{val_loss:.2f}.hdf5'
-BATCH_SIZE = 128
-EPOCH = 20
-
 
 # ラベルのロード
 label = []
