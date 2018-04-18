@@ -28,7 +28,7 @@ if args.output:
 if args.size:
     IMG_SIZE = args.size
 
-from keras.preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
+from keras.preprocessing.image import img_to_array, list_pictures, load_img
 
 # ラベルの読み込み
 LABEL_DATA = []
@@ -48,7 +48,7 @@ prog.finish()
 print('{} pictures.'.format(NUM_PICS))
 
 # 画像とラベルデータ
-print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*4))
+print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*1))
 X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
 Y = np.empty(NUM_PICS, dtype=int)
 
