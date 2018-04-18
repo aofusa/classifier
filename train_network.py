@@ -59,7 +59,7 @@ from keras.applications.resnet50 import preprocess_input
 
 # ラベルのロード
 label = []
-with open(LABEL_FILE, 'r') as f:
+with open(LABEL_FILE, 'r', encoding='utf-8') as f:
     label = f.read().split('\n')
 
 # データセットのロード
@@ -73,7 +73,7 @@ model = None
 if Path(MODEL_NAME).exists():
     # 前回のモデルがあればロードする
     print('model load {}'.format(MODEL_NAME))
-    with open(MODEL_NAME, 'r') as f:
+    with open(MODEL_NAME, 'r', encoding='utf-8') as f:
         model = model_from_json(f.read())
 
 else:
@@ -99,7 +99,7 @@ else:
     # モデルの書き出し
     print('save model {}'.format(MODEL_NAME))
     model_json = model.to_json()
-    open(MODEL_NAME, 'w').write(model_json)
+    open(MODEL_NAME, 'w', encoding='utf-8').write(model_json)
 
 # 一旦全レイヤーをフリーズ
 for layer in model.layers:

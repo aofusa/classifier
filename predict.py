@@ -32,10 +32,10 @@ from keras.applications.resnet50 import preprocess_input
 
 
 # ラベルのロード
-label = open(LABEL_FILE, 'r').read().split('\n')
+label = open(LABEL_FILE, 'r', encoding='utf-8').read().split('\n')
 
 # モデルのロード
-model = model_from_json(open(MODEL_NAME, 'r').read())
+model = model_from_json(open(MODEL_NAME, 'r', encoding='utf-8').read())
 model.load_weights(sorted(Path(WEIGHT_DIR).glob('*'))[-1])
 
 # 画像から入力データを作成
