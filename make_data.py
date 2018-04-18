@@ -49,25 +49,36 @@ print('{} pictures.'.format(NUM_PICS))
 
 # 画像とラベルデータ
 print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*1))
-X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
 Y = np.empty(NUM_PICS, dtype=int)
+X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
 
 # 対象画像の読み込みとラベリング
-POSITION = 0
 IMG = np.empty((1, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
+POSITION = 0
+ERROR_COUNT = 0
 for index, label in enumerate(LABEL_DATA):
     path = Path(DATA_DIR).joinpath(label)
     pics = list_pictures(path)
-    Y[POSITION:POSITION+len(pics)] = np.full(len(pics), index, dtype=int)
     prog = ProgressBar(0, len(pics))
     print('[{}/{}] load {} {} pictures.'.format(index+1, len(LABEL_DATA), path, len(pics)))
-    for i, picture in enumerate(pics):
-        IMG[0] = img_to_array(load_img(picture, target_size=(IMG_SIZE, IMG_SIZE)))
-        X[POSITION+i] = IMG
-        prog.update(i+1)
+    count = 0
+    for picture in pics:
+        try:
+            IMG[0] = img_to_array(load_img(picture, target_size=(IMG_SIZE, IMG_SIZE)))
+            X[POSITION+count] = IMG
+            prog.update(count+1)
+            count += 1
+        except Exception as identifier:
+            print(picture, identifier)
+            pics.remove(picture)
+            ERROR_COUNT += 1
+    Y[POSITION:POSITION+len(pics)] = np.full(len(pics), index, dtype=int)
     POSITION += len(pics)
     prog.finish()
 
 # データセットを保存
-np.savez_compressed(SAVE_NAME, features=X, labels=Y)
+if ERROR_COUNT > 0:
+    np.savez_compressed(SAVE_NAME, features=X[:-ERROR_COUNT], labels=Y)
+else:
+    np.savez_compressed(SAVE_NAME, features=X, labels=Y)
 
