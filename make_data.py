@@ -61,6 +61,7 @@ for index, label in enumerate(LABEL_DATA):
         IMG[0] = img_to_array(load_img(picture, target_size=(IMG_SIZE, IMG_SIZE)))
         X[POSITION+i] = IMG
         prog.update(i+1)
+    POSITION += len(pics)
 
 # 画素値を0から1の範囲に変換
 X /= 255.0
