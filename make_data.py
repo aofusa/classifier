@@ -41,10 +41,11 @@ with open(LABEL_FILE, 'r', encoding='utf-8') as f:
 NUM_PICS = 0
 print('count pictures.')
 prog = ProgressBar(0, len(LABEL_DATA))
-for label in LABEL_DATA:
+for index, label in enumerate(LABEL_DATA):
     path = Path(DATA_DIR).joinpath(label)
     pics = list_pictures(path)
     NUM_PICS += len(pics)
+    prog.update(index+1)
 prog.finish()
 print('{} pictures.'.format(NUM_PICS))
 
