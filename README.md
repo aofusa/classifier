@@ -66,11 +66,10 @@ python3 predict_nnvm.py --label ./label.txt --model ./model.json --weight ./weig
 
 
 ### その他
-crawler ディレクトリ配下に使用した画像収集スクリプトを置いておく  
-Windows だと文字コードを UTF-8 しないとダメかもしれない  
-- chcp 65001
+crawler ディレクトリ配下に使用した画像収集スクリプトを置いておきます  
+Windows だと文字コードを UTF-8 にしないとダメかもしれない  
+- chcp 65001  
   Powershell の文字コードを UTF-8 に変更  
   (chcp 932 で元に戻る、あらかじめ chcp コマンドで元の文字コードを確認することを推奨)  
-- encoding='utf-8'
-  Pythonスクリプト内、file.open()時に UTF-8 で開くよう指定  
+使用するデータセットの大きさに応じて相応のスワップ領域（仮想メモリ）を用意しないと Out of Memory で落ちます  
 
