@@ -19,7 +19,7 @@ args = parser.parse_args()
 DATASET_FILE = 'dataset.npz'
 LABEL_FILE = 'label.txt'
 MODEL_NAME = 'model.json'
-WEIGHT_NAME = 'weight.hdf5' #'weights.{epoch:02d}-{val_loss:.2f}.hdf5'
+WEIGHT_NAME = 'weights.{epoch:02d}-{val_loss:.2f}.hdf5'
 WEIGHT_DIR = 'weight'
 BATCH_SIZE = 128
 EPOCH = 20
@@ -38,9 +38,6 @@ if args.batch:
     BATCH_SIZE = args.batch
 if args.epoch:
     EPOCH = args.epoch
-
-# import plaidml.keras
-# plaidml.keras.install_backend()
 
 import keras
 from keras.models import Model
@@ -65,8 +62,8 @@ with open(LABEL_FILE, 'r', encoding='utf-8') as f:
 # データセットのロード
 print('dataset load {}'.format(DATASET_FILE))
 dataset = np.load(DATASET_FILE)
-X_dataset = dataset['features']
-y_dataset = dataset['labels']
+X_dataset = keras.backend.cast_to_floatx(dataset['features']) / 255.0
+y_dataset = np_utils.to_categorical(dataset['labels'], len(label))
 
 # モデルのロード
 model = None

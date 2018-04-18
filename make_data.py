@@ -28,8 +28,6 @@ if args.output:
 if args.size:
     IMG_SIZE = args.size
 
-import keras
-from keras.utils import np_utils
 from keras.preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
 
 # ラベルの読み込み
@@ -51,12 +49,12 @@ print('{} pictures.'.format(NUM_PICS))
 
 # 画像とラベルデータ
 print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*4))
-X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='float32')
+X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
 Y = np.empty(NUM_PICS, dtype=int)
 
 # 対象画像の読み込みとラベリング
 POSITION = 0
-IMG = np.empty((1, IMG_SIZE, IMG_SIZE, 3), dtype='float32')
+IMG = np.empty((1, IMG_SIZE, IMG_SIZE, 3), dtype='int8')
 for index, label in enumerate(LABEL_DATA):
     path = Path(DATA_DIR).joinpath(label)
     pics = list_pictures(path)
@@ -69,12 +67,6 @@ for index, label in enumerate(LABEL_DATA):
         prog.update(i+1)
     POSITION += len(pics)
     prog.finish()
-
-# 画素値を0から1の範囲に変換
-X /= 255.0
-
-# クラスの形式を変換
-Y = np_utils.to_categorical(Y, len(LABEL_DATA))
 
 # データセットを保存
 np.savez_compressed(SAVE_NAME, features=X, labels=Y)
