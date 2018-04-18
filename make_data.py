@@ -39,12 +39,17 @@ with open(LABEL_FILE, 'r', encoding='utf-8') as f:
 
 # 全画像枚数
 NUM_PICS = 0
+print('count pictures.')
+prog = ProgressBar(0, len(LABEL_DATA))
 for label in LABEL_DATA:
     path = Path(DATA_DIR).joinpath(label)
     pics = list_pictures(path)
     NUM_PICS += len(pics)
+prog.finish()
+print('{} pictures.'.format(NUM_PICS))
 
 # 画像とラベルデータ
+print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*4))
 X = np.empty((NUM_PICS, IMG_SIZE, IMG_SIZE, 3), dtype='float32')
 Y = np.empty(NUM_PICS, dtype=int)
 
@@ -62,6 +67,7 @@ for index, label in enumerate(LABEL_DATA):
         X[POSITION+i] = IMG
         prog.update(i+1)
     POSITION += len(pics)
+    prog.finish()
 
 # 画素値を0から1の範囲に変換
 X /= 255.0
