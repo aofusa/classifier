@@ -34,32 +34,26 @@ from keras.preprocessing.image import array_to_img, img_to_array, list_pictures,
 
 # ラベルの読み込み
 LABEL_DATA = []
-with open(LABEL_FILE, 'r') as f:
+with open(LABEL_FILE, 'r', encoding='utf-8') as f:
     LABEL_DATA = f.read().split('\n')
 
 # 画像とラベルデータ
-X = []
-Y = []
+X = np.empty((0, IMG_SIZE, IMG_SIZE, 3), dtype='float32')
+Y = np.empty(0, dtype=int)
 
 # 対象画像の読み込みとラベリング
 for index, label in enumerate(LABEL_DATA):
     path = Path(DATA_DIR).joinpath(label)
     pics = list_pictures(path)
     prog = ProgressBar(0, len(pics))
+    Y = np.append(Y, np.full(len(pics), index, dtype=int))
     print('[{}/{}] load {} {} pictures.'.format(index+1, len(LABEL_DATA), path, len(pics)))
     for i, picture in enumerate(pics):
         img = img_to_array(load_img(picture, target_size=(IMG_SIZE, IMG_SIZE)))
-        X.append(img)
-        Y.append(index)
+        img = keras.backend.cast_to_floatx(img) / 255.0  # 画素値を0から1の範囲に変換
+        img = np.expand_dims(img, axis=0)
+        X = np.append(X, img, axis=0)
         prog.update(i+1)
-
-# arrayに変換
-X = np.asarray(X)
-Y = np.asarray(Y)
-
-# 画素値を0から1の範囲に変換
-X = keras.backend.cast_to_floatx(X)
-X = X / 255.0
 
 # クラスの形式を変換
 Y = np_utils.to_categorical(Y, len(LABEL_DATA))
