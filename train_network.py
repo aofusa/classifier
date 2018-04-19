@@ -61,10 +61,11 @@ with open(LABEL_FILE, 'r', encoding='utf-8') as f:
 
 # データセットのロード
 print('dataset load {}'.format(DATASET_FILE))
-(X_dataset, y_dataset) = np.load(DATASET_FILE)
-y_dataset = np_utils.to_categorical(y_dataset, len(label))
-X_dataset = X_dataset.astype('float16')
+dataset = np.load(DATASET_FILE)
+y_dataset = np_utils.to_categorical(dataset['labels'], len(label))
+X_dataset = dataset['features'].astype('float16')
 X_dataset /= 255.0
+del dataset
 
 # モデルのロード
 model = None
