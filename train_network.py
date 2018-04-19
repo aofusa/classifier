@@ -122,6 +122,8 @@ model.compile(loss='categorical_crossentropy',
 X_dataset = preprocess_input(X_dataset)
 X_train, X_test, y_train, y_test = train_test_split(
     X_dataset, y_dataset, test_size=0.02, random_state=42)
+del X_dataset
+del y_dataset
 
 # 学習済みの重みの取得
 weights = sorted(Path(WEIGHT_DIR).glob('*'))
