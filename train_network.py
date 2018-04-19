@@ -2,6 +2,7 @@
 
 import numpy as np
 from pathlib import Path
+import math
 import argparse
 
 # 引数のパーシング
@@ -63,8 +64,7 @@ with open(LABEL_FILE, 'r', encoding='utf-8') as f:
 print('dataset load {}'.format(DATASET_FILE))
 dataset = np.load(DATASET_FILE)
 y_dataset = np_utils.to_categorical(dataset['labels'], len(label))
-X_dataset = dataset['features'].astype('float16')
-X_dataset /= 255.0
+X_dataset = keras.backend.cast_to_floatx(dataset['features']) / 255.0
 del dataset
 
 # モデルのロード
@@ -84,7 +84,7 @@ else:
 
     # 中間層を出力するモデル
     # intermediate_layer_model = Model(inputs=pretrained_model.input, outputs=pretrained_model.layers[311].output)
-    # intermediate_layer_model = Model(inputs=pretrained_model.input, outputs=pretrained_model.layers[21].output)
+    # intermediate_layer_model = Model(inputs=pretrained_model.input, outputs=pretrained_model.layers[24].output)
     intermediate_layer_model = Model(inputs=pretrained_model.input, outputs=pretrained_model.layers[175].output)
 
     # Denseレイヤーを接続
@@ -107,8 +107,8 @@ for layer in model.layers:
 # 最終段のDenseだけ再学習する
 # model.layers[312].trainable = True
 # model.layers[313].trainable = True
-# model.layers[22].trainable = True
-# model.layers[23].trainable = True
+# model.layers[25].trainable = True
+# model.layers[26].trainable = True
 model.layers[176].trainable = True
 model.layers[177].trainable = True
 
@@ -120,8 +120,12 @@ model.compile(loss='categorical_crossentropy',
 
 # データセットを学習用とテスト用に分割
 X_dataset = preprocess_input(X_dataset)
-X_train, X_test, y_train, y_test = train_test_split(
-    X_dataset, y_dataset, test_size=0.02, random_state=42)
+np.random.seed(42)
+np.random.shuffle(X_dataset)
+np.random.seed(42)
+np.random.shuffle(y_dataset)
+spot = math.ceil(X_dataset.shape[0] * 0.1)
+X_train, X_test, y_train, y_test = X_dataset[spot:], X_dataset[:spot], y_dataset[spot:], y_dataset[:spot]
 del X_dataset
 del y_dataset
 
