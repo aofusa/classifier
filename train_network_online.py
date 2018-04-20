@@ -101,7 +101,7 @@ else:
     intermediate_layer_model = Model(inputs=pretrained_model.input, outputs=pretrained_model.layers[175].output)
     x = intermediate_layer_model.output
     x = Dense(1024, activation='relu')(x)
-    predictions = Dense(len(label), activation='softmax')(x)
+    predictions = Dense(len(LABEL_DATA), activation='softmax')(x)
     model = Model(inputs=intermediate_layer_model.input, outputs=predictions)
     print('save model {}'.format(MODEL_NAME))
     model_json = model.to_json()
@@ -136,8 +136,8 @@ for epoch in range(0, EPOCH):
         END = SAMPLING*(sample+1)
         if END > len(LIST_PICS):
             END = len(LIST_PICS)
-        prog = ProgressBar(0, END)
-        print('[{}/{}] load {} pictures.'.format(sample+1, math.ceil(NUM_PICS/SAMPLING), END))
+        prog = ProgressBar(0, END-SAMPLING*sample)
+        print('[{}/{}] load {} pictures.'.format(sample+1, math.ceil(NUM_PICS/SAMPLING), END-SAMPLING*sample))
         count = 0
         for index, picture in enumerate(LIST_PICS[SAMPLING*sample:END]):
             try:
@@ -149,21 +149,17 @@ for epoch in range(0, EPOCH):
                 count += 1
             except Exception as identifier:
                 print(picture, identifier)
-                pics.remove(picture)
                 ERROR_COUNT += 1
         prog.finish()
 
         # データセットを学習用とテスト用に分割
-        X_dataset = preprocess_input(X[:END-ERROR_COUNT])
-        y_dataset = np_utils.to_categorical(Y[:END-ERROR_COUNT], len(LABEL_DATA))
-        np.random.seed(42 + epoch)
-        np.random.shuffle(X_dataset)
-        np.random.seed(42 + epoch)
-        np.random.shuffle(y_dataset)
+        X_dataset = preprocess_input(X[:END-SAMPLING*sample-ERROR_COUNT])
+        y_dataset = np_utils.to_categorical(Y[:END-SAMPLING*sample-ERROR_COUNT], len(LABEL_DATA))
         spot = math.ceil(X.shape[0] * 0.1)
-        X_train, X_test, y_train, y_test = X_dataset[spot:], X_dataset[:spot], Y[spot:], Y[:spot]
+        X_train, X_test, y_train, y_test = X_dataset[spot:], X_dataset[:spot], y_dataset[spot:], y_dataset[:spot]
 
         # 学習の実行
+        print('Iteration {}/{}'.format(epoch+1, EPOCH))
         model_path = str(Path(WEIGHT_DIR).joinpath(WEIGHT_NAME))
         checkpointer = keras.callbacks.ModelCheckpoint(model_path)
         model.fit(X_train, y_train, epochs=epoch+1, batch_size=BATCH_SIZE,
