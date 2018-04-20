@@ -11,7 +11,6 @@ parser.add_argument('-w', '--weight', help='save weight hdf5 name (default weigh
 parser.add_argument('-o', '--output', help='save weight output directory (default ./weight)')
 parser.add_argument('-b', '--batch', help='batch size (default 128)', type=int)
 parser.add_argument('-e', '--epoch', help='num epochs (default 20)', type=int)
-args = parser.parse_args()
 parser.add_argument('-s', '--sample', help='num samples (default 6600)', type=int)
 args = parser.parse_args()
 
@@ -83,7 +82,7 @@ LIST_PICS = np.asarray(LIST_PICS)
 print('{} pictures.'.format(NUM_PICS))
 
 # 画像とラベルデータ
-print('reserve memory {} byte.'.format(NUM_PICS*IMG_SIZE*IMG_SIZE*3*1))
+print('reserve memory {} byte.'.format(SAMPLING*IMG_SIZE*IMG_SIZE*3*4))
 Y = np.empty(SAMPLING, dtype=int)
 X = np.empty((SAMPLING, IMG_SIZE, IMG_SIZE, 3), dtype=keras.backend.floatx())
 IMG = np.empty((1, IMG_SIZE, IMG_SIZE, 3), dtype=keras.backend.floatx())
