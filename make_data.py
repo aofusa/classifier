@@ -78,7 +78,7 @@ for index, label in enumerate(LABEL_DATA):
 
 # データセットを保存
 if ERROR_COUNT > 0:
-    np.savez_compressed(SAVE_NAME, features=X[:-ERROR_COUNT], labels=Y)
+    np.savez_compressed(SAVE_NAME, features=X[:-ERROR_COUNT], labels=Y[:ERROR_COUNT])
 else:
     np.savez_compressed(SAVE_NAME, features=X, labels=Y)
 
