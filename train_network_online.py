@@ -155,7 +155,7 @@ for epoch in range(0, EPOCH):
         # データセットを学習用とテスト用に分割
         X_dataset = preprocess_input(X[:END-SAMPLING*sample-ERROR_COUNT])
         y_dataset = np_utils.to_categorical(Y[:END-SAMPLING*sample-ERROR_COUNT], len(LABEL_DATA))
-        spot = math.ceil(X.shape[0] * 0.1)
+        spot = math.ceil(X_dataset.shape[0] * 0.1)
         X_train, X_test, y_train, y_test = X_dataset[spot:], X_dataset[:spot], y_dataset[spot:], y_dataset[:spot]
 
         # 学習の実行
