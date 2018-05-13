@@ -54,7 +54,12 @@ python3 train_network.py --dataset ./dataset.npz --label ./label.txt --model ./m
 
 ### 推論
 ```
-python3 predict.py --label ./label.txt --model ./model.json --weight ./weight <画像ファイルパス>
+python3 predict.py --label ./label.txt --model ./model.json --weight ./weight/weight.hdf5 <画像ファイルパス>
+```
+
+以下のようにすると各データセットの正答率が見えて楽しい  
+```
+find ./dataset/* -maxdepth 0 | while read -r val; do find "$val" -type f | head -n 1; done | sed 's/\n/ /g' | xargs python3 predict.py --label ./label.txt --model ./model.json --weight weight/weights.hdf5
 ```
 
 
