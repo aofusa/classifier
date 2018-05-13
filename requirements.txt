@@ -1,14 +1,13 @@
-h5py>=2.7.1
-Keras>=2.1.5
-numpy>=1.14.2
-Pillow>=5.1.0
-progressbar2>=3.37.1
-scikit-learn>=0.19.1
-tensorflow>=1.7.0
+h5py==2.7.1
+Keras==2.1.5
+numpy==1.14.2
+Pillow==5.1.0
+progressbar2==3.37.1
+tensorflow==1.7.0
 
-# coremltools>=0.8
-# plaidml>=0.3.1
-# plaidml-keras>=0.3.1
-# nnvm>=0.8.0
-# tvm>=0.2.0
-# tensorflow-gpu>=1.1.0
+# coremltools==0.8
+# plaidml==0.3.1
+# plaidml-keras==0.3.1
+# nnvm==0.8.0
+# tvm==0.2.0
+# tensorflow-gpu==1.1.0

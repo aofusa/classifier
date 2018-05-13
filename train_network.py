@@ -45,7 +45,6 @@ from keras.models import Model
 from keras.layers import Dense
 from keras.preprocessing import image
 from keras.utils import np_utils
-from sklearn.model_selection import train_test_split
 from keras.models import model_from_json
 # from keras.layers import Input
 # from keras.applications.inception_v3 import InceptionV3
@@ -119,25 +118,46 @@ model.compile(loss='categorical_crossentropy',
             metrics=['accuracy'])
 
 # データセットを学習用とテスト用に分割
-X_dataset = preprocess_input(X_dataset)
-np.random.seed(42)
-np.random.shuffle(X_dataset)
-np.random.seed(42)
-np.random.shuffle(y_dataset)
-spot = math.ceil(X_dataset.shape[0] * 0.1)
-X_train, X_test, y_train, y_test = X_dataset[spot:], X_dataset[:spot], y_dataset[spot:], y_dataset[:spot]
+result = []
+position = 0
+for index, value in enumerate(y_dataset):
+    if not (value == y_dataset[position]).all():
+        result.append((position, index))
+        position = index
+    if index == len(y_dataset)-1:
+        result.append((position, index+1))
+
+train_length = 0
+test_length = 0
+for value in result:
+    length = value[1] - value[0]
+    spot = math.ceil(length * (1.0 - 0.1))
+    train_length += spot
+    test_length += (length-spot)
+    y_dataset[train_length:len(y_dataset)] = np.roll(y_dataset[train_length:len(y_dataset)], -(length-spot), axis=0)
+    X_dataset[train_length:len(X_dataset)] = np.roll(X_dataset[train_length:len(X_dataset)], -(length-spot), axis=0)
+
+X_train, X_test = X_dataset[0:train_length], X_dataset[train_length:len(X_dataset)]
+y_train, y_test = y_dataset[0:train_length], y_dataset[train_length:len(y_dataset)]
 del X_dataset
 del y_dataset
 
 # 学習済みの重みの取得
 weights = sorted(Path(WEIGHT_DIR).glob('*'))
+if Path(WEIGHT_DIR, '.gitignore') in weights:
+    weights.remove(Path(WEIGHT_DIR, '.gitignore'))
 if len(weights) > 0:
-    print('weight load {}'.format(weights[-1]))
-    model.load_weights(weights[-1])
+    w = None
+    if Path(WEIGHT_DIR, WEIGHT_NAME).exists():
+        w = Path(WEIGHT_DIR).joinpath(WEIGHT_NAME)
+    else:
+        w = weights[-1]
+    print('weight load {}'.format(w))
+    model.load_weights(w)
 
 # 学習の実行
 model_path = str(Path(WEIGHT_DIR).joinpath(WEIGHT_NAME))
-checkpointer = keras.callbacks.ModelCheckpoint(model_path)
+checkpointer = keras.callbacks.ModelCheckpoint(filepath=model_path, save_best_only=True)
 model.fit(X_train, y_train, epochs=EPOCH, batch_size=BATCH_SIZE,
           validation_data=(X_test, y_test),
           callbacks=[checkpointer])
