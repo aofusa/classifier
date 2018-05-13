@@ -9,7 +9,7 @@ parser.add_argument('filepath', help='image file path', nargs='+')
 parser.add_argument('-l', '--label', help='label text file (default ./label.txt)')
 parser.add_argument('-m', '--model', help='load model json (default ./model.json)')
 parser.add_argument('-w', '--weight', help='load weight hdf5 file (default ./weight/weight.hdf5)')
-parser.add_argument('-d', '--display', help='number of display result (default 5)')
+parser.add_argument('-d', '--display', help='number of display result (default 5)', type=int)
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--opencl', action='store_true', help='Target API OpenCL (default)')
 group.add_argument('--llvm', action='store_true', help='Target API LLVM CPU')
@@ -120,6 +120,6 @@ for img_path in args.filepath:
     print('Predicted: {}'.format(label[np.argmax(tvm_out)]))
     for i, v in enumerate(ranking):
         print(i, v)
-        if i >= DISPLAY_NUM:
+        if i >= DISPLAY_NUM-1:
             break
 
