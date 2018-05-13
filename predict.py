@@ -9,20 +9,24 @@ parser = argparse.ArgumentParser(description='predict image')
 parser.add_argument('filepath', help='image file path', nargs='+')
 parser.add_argument('-l', '--label', help='label text file (default ./label.txt)')
 parser.add_argument('-m', '--model', help='load model json (default ./model.json)')
-parser.add_argument('-w', '--weight', help='load weight directory (default ./weight)')
+parser.add_argument('-w', '--weight', help='load weight hdf5 file (default ./weight/weight.hdf5)')
+parser.add_argument('-d', '--display', help='number of display result (default 5)')
 args = parser.parse_args()
 
 # データパス
 LABEL_FILE = 'label.txt'
 MODEL_NAME = 'model.json'
-WEIGHT_DIR = 'weight'
+WEIGHT_FILE = 'weight/weight.hdf5'
+DISPLAY_NUM = 5
 
 if args.label:
     LABEL_FILE = args.label
 if args.model:
     MODEL_NAME = args.model
 if args.weight:
-    WEIGHT_DIR = args.weight
+    WEIGHT_FILE = args.weight
+if args.display:
+    DISPLAY_NUM = args.display
 
 from keras.preprocessing import image
 from keras.models import model_from_json
@@ -36,7 +40,7 @@ label = open(LABEL_FILE, 'r', encoding='utf-8').read().split('\n')
 
 # モデルのロード
 model = model_from_json(open(MODEL_NAME, 'r', encoding='utf-8').read())
-model.load_weights(sorted(Path(WEIGHT_DIR).glob('*'))[-1])
+model.load_weights(WEIGHT_FILE)
 
 # 画像から入力データを作成
 for img_path in args.filepath:
@@ -55,6 +59,6 @@ for img_path in args.filepath:
     print('Predicted: {}'.format(label[np.argmax(preds)]))
     for i, v in enumerate(ranking):
         print(i, v)
-        if i > 5:
+        if i >= DISPLAY_NUM:
             break
 
