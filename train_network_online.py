@@ -61,9 +61,7 @@ from keras.applications.resnet50 import ResNet50
 from keras.applications.resnet50 import preprocess_input
 
 # ラベルの読み込み
-LABEL_DATA = []
-with open(LABEL_FILE, 'r', encoding='utf-8') as f:
-    LABEL_DATA = f.read().split('\n')
+LABEL_DATA = open(LABEL_FILE, 'r', encoding='utf-8').read().split('\n')
 
 # 全画像枚数
 NUM_PICS = 0
@@ -121,9 +119,16 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 # 学習済みの重みの取得
 weights = sorted(Path(WEIGHT_DIR).glob('*'))
+if Path(WEIGHT_DIR, '.gitignore') in weights:
+    weights.remove(Path(WEIGHT_DIR, '.gitignore'))
 if len(weights) > 0:
-    print('weight load {}'.format(weights[-1]))
-    model.load_weights(weights[-1])
+    w = None
+    if Path(WEIGHT_DIR, WEIGHT_NAME).exists():
+        w = Path(WEIGHT_DIR).joinpath(WEIGHT_NAME)
+    else:
+        w = weights[-1]
+    print('weight load {}'.format(w))
+    model.load_weights(w)
 
 # オンライン学習
 for epoch in range(0, EPOCH):
