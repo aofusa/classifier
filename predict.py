@@ -46,13 +46,15 @@ def load_model(modelpath, weightpath):
 
 def show_predict(model, label, filelist, display=5):
     """
-    引き数与えられたパスの画像を読み込み推論結果を出力します
+    引き数で与えられたパスの画像を読み込み推論結果を出力します
+    推論結果はjson形式で出力されます
     """
     import numpy as np
     from keras.preprocessing import image
     # from keras.applications.inception_v3 import preprocess_input
     # from keras.applications.vgg19 import preprocess_input
     from keras.applications.resnet50 import preprocess_input
+    print('[')
     for img_path in filelist:
         img = image.load_img(img_path, target_size=(224, 224))
         x = image.img_to_array(img)
@@ -65,12 +67,23 @@ def show_predict(model, label, filelist, display=5):
         ranking = sorted(pred.items(), key=lambda x: -x[1])
 
         # 推論結果を出力
-        print('\nFile: {}'.format(img_path))
-        print('Predicted: {}'.format(label[np.argmax(preds)]))
+        print('  {')
+        print('    "File": "{}",'.format(img_path))
+        print('    "Predict": "{}",'.format(label[np.argmax(preds)]))
+        print('    "Ranking": {')
         for i, v in enumerate(ranking):
-            print(i, v)
-            if i >= display-1:
+            if i >= display-1 or i == len(ranking)-1:
+                print('      "{}": {} "Label":"{}", "Accuracy":{} {}'.format(i, '{', v[0], v[1], '}'))
                 break
+            else:
+                print('      "{}": {} "Label":"{}", "Accuracy":{} {},'.format(i, '{', v[0], v[1], '}'))
+        print('    }')
+        if img_path != filelist[-1]:
+            print('  },')
+        else:
+            print('  }')
+
+    print(']')
 
 
 def main():
