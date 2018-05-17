@@ -73,10 +73,12 @@ def show_predict(model, label, filelist, display=5):
         print('    "Ranking": {')
         for i, v in enumerate(ranking):
             if i >= display-1 or i == len(ranking)-1:
-                print('      "{}": {} "Label":"{}", "Accuracy":{} {}'.format(i, '{', v[0], v[1], '}'))
+                print('      "{}": {} "Label":"{}", "Accuracy":{} {}'.format(
+                    i, '{', v[0], v[1], '}'))
                 break
             else:
-                print('      "{}": {} "Label":"{}", "Accuracy":{} {},'.format(i, '{', v[0], v[1], '}'))
+                print('      "{}": {} "Label":"{}", "Accuracy":{} {},'.format(
+                    i, '{', v[0], v[1], '}'))
         print('    }')
         if img_path != filelist[-1]:
             print('  },')
