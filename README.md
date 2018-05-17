@@ -61,13 +61,14 @@ python3 train_network_online.py --dataset ./dataset/ --label ./label.txt --model
 
 
 ### 推論
+JSON形式で出力されます  
 ```
 python3 predict.py --label ./label.txt --model ./model.json --weight ./weight/weight.hdf5 <画像ファイルパス>
 ```
 
 以下のようにすると各データセットの正答率が見えて楽しい  
 ```
-find ./dataset/* -maxdepth 0 | while read -r val; do find "$val" -type f | head -n 1; done | sed 's/\n/ /g' | xargs python3 predict.py --label ./label.txt --model ./model.json --weight $(find ./weight | tail -1)
+find ./dataset/* -maxdepth 0 | while read -r val; do find "$val" -type f | sort -R | head -n 1; done | sed 's/\n/ /g' | xargs python3 predict.py --label ./label.txt --model ./model.json --weight $(find ./weight | tail -1)
 ```
 
 
