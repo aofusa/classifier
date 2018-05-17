@@ -7,10 +7,19 @@ def arg():
     """
     import argparse
     parser = argparse.ArgumentParser(description='make dataset')
-    parser.add_argument('-d', '--dir', help='path to dataset directory (default ./dataset)', default='./dataset')
-    parser.add_argument('-l', '--label', help='label text file (default ./label.txt)', default='./label.txt')
-    parser.add_argument('-o', '--output', help='save numpy file (.npz) name (default ./dataset.npz)', default='./dataset.npz')
-    parser.add_argument('-s', '--size', help='resize image (default 224)', type=int, default=224)
+    parser.add_argument('-d', '--dir',
+                        help='path to dataset directory (default ./dataset)',
+                        default='./dataset')
+    parser.add_argument('-l', '--label',
+                        help='label text file (default ./label.txt)',
+                        default='./label.txt')
+    parser.add_argument('-o', '--output',
+                        help='save numpy file (.npz) name \
+                             (default ./dataset.npz)',
+                        default='./dataset.npz')
+    parser.add_argument('-s', '--size',
+                        help='resize image (default 224)',
+                        type=int, default=224)
     args = parser.parse_args()
 
     return args
@@ -51,12 +60,12 @@ def allocate_memory(count, size):
     """
     import sys
     import numpy as np
-    print('reserve memory {} byte.'.format(count*size*size*3*1 + count*4), file=sys.stderr)
+    print('reserve memory {} byte.'.format(
+        count*size*size*3*1 + count*4), file=sys.stderr)
     Y = np.empty(count, dtype=int)
     X = np.empty((count, size, size, 3), dtype='int8')
 
     return (X, Y)
-
 
 
 def make_dataset_reaction(out_x, out_y, labeldata, datapath, size):
@@ -76,11 +85,13 @@ def make_dataset_reaction(out_x, out_y, labeldata, datapath, size):
         path = Path(datapath).joinpath(label)
         pics = list_pictures(path)
         prog = ProgressBar(0, len(pics))
-        print('[{}/{}] load {} {} pictures.'.format(index+1, len(labeldata), path, len(pics)), file=sys.stderr)
+        print('[{}/{}] load {} {} pictures.'.format(
+            index+1, len(labeldata), path, len(pics)), file=sys.stderr)
         count = 0
         for picture in pics:
             try:
-                IMG[0] = img_to_array(load_img(picture, target_size=(size, size)))
+                IMG[0] = img_to_array(
+                    load_img(picture, target_size=(size, size)))
                 out_x[POSITION+count] = IMG
                 prog.update(count+1)
                 count += 1
@@ -88,7 +99,8 @@ def make_dataset_reaction(out_x, out_y, labeldata, datapath, size):
                 print(picture, identifier)
                 pics.remove(picture)
                 ERROR.append(picture)
-        out_y[POSITION:POSITION+len(pics)] = np.full(len(pics), index, dtype=int)
+        out_y[POSITION:POSITION+len(pics)] = np.full(
+            len(pics), index, dtype=int)
         POSITION += len(pics)
         prog.finish()
 
@@ -128,4 +140,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
