@@ -150,7 +150,7 @@ def show_predict(model, label, filelist, display=5, api='opencl', context=0):
         print('    "Predict": "{}",'.format(label[np.argmax(tvm_out)]))
         print('    "Ranking": {')
         for i, v in enumerate(ranking):
-            if i >= display-1 or i == len(ranking)-1:
+            if i == len(ranking)-1 or (display>0 and i >= display-1):
                 print('      "{}": {} "Label":"{}", "Accuracy":{} {}'.format(
                     i, '{', v[0], v[1], '}'))
                 break
