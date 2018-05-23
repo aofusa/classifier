@@ -1,5 +1,7 @@
 #! python3
 
+import sys
+
 
 def arg():
     """
@@ -77,7 +79,8 @@ def load_model(modelpath, weightpath):
     return model
 
 
-def show_predict(model, label, filelist, display=5, api='opencl', context=0):
+def show_predict(model, label, filelist, display=5,
+                 api='opencl', context=0, file=sys.stdout):
     """
     引き数で与えられたパスの画像を読み込み推論結果を出力します
     推論結果はjson形式で出力されます
@@ -124,7 +127,7 @@ def show_predict(model, label, filelist, display=5, api='opencl', context=0):
     m = graph_runtime.create(graph, lib, ctx)
 
     # JSON形式で表示
-    print('[')
+    print('[', file=file)
     for img_path in filelist:
         # 入力データのセット
         img = image.load_img(img_path, target_size=(224, 224))
@@ -145,25 +148,25 @@ def show_predict(model, label, filelist, display=5, api='opencl', context=0):
         ranking = sorted(pred.items(), key=lambda x: -x[1])
 
         # 推論結果を出力
-        print('  {')
-        print('    "File": "{}",'.format(img_path))
-        print('    "Predict": "{}",'.format(label[np.argmax(tvm_out)]))
-        print('    "Ranking": {')
+        print('  {', file=file)
+        print('    "File": "{}",'.format(img_path), file=file)
+        print('    "Predict": "{}",'.format(label[np.argmax(tvm_out)]), file=file)
+        print('    "Ranking": {', file=file)
         for i, v in enumerate(ranking):
             if i == len(ranking)-1 or (display>0 and i >= display-1):
                 print('      "{}": {} "Label":"{}", "Accuracy":{} {}'.format(
-                    i, '{', v[0], v[1], '}'))
+                    i, '{', v[0], v[1], '}'), file=file)
                 break
             else:
                 print('      "{}": {} "Label":"{}", "Accuracy":{} {},'.format(
-                    i, '{', v[0], v[1], '}'))
-        print('    }')
+                    i, '{', v[0], v[1], '}'), file=file)
+        print('    }', file=file)
         if img_path != filelist[-1]:
-            print('  },')
+            print('  },', file=file)
         else:
-            print('  }')
+            print('  }', file=file)
 
-    print(']')
+    print(']', file=file)
 
 
 def main():
@@ -178,7 +181,7 @@ def main():
 
     # 画像から推論を実行して結果を表示
     show_predict(model, label, args.filepath, args.display,
-                 args.api, args.context)
+                 args.api, args.context, sys.stdout)
 
 
 if __name__ == '__main__':
