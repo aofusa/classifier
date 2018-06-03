@@ -31,9 +31,20 @@ def arg():
     parser.add_argument('-t', '--test_size',
                         help='num test size (default 0.1)',
                         type=float, default=0.1)
+    parser.add_argument('--plaidml', action='store_true',
+                       help='Enable PlaidML backend instead of Tensorflow')
     args = parser.parse_args()
 
     return args
+
+
+def enable_plaidml():
+    """
+    Keras のバックエンドを tensorflow から plaidml に変更します
+    """
+    # Install the plaidml backend
+    import plaidml.keras
+    plaidml.keras.install_backend()
 
 
 def load_label(filepath):
@@ -228,6 +239,10 @@ def show_evaluation(model, x, y):
 def main():
     # 引数のパーシング
     args = arg()
+
+    # PlaidML backend のインストール
+    if args.plaidml:
+        enable_plaidml()
 
     # ラベルのロード
     label = load_label(args.label)
