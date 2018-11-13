@@ -56,7 +56,7 @@ python3 train_network.py --dataset ./dataset.npz --label ./label.txt --model ./m
 上記のデータセット生成・学習の場合それなりのメモリが要求される  
 データセットがメモリに乗り切らない場合は下記のコマンドでデータを小分けにして読み込み学習できる  
 ```
-python3 train_network_online.py --dataset ./dataset/ --label ./label.txt --model ./model.json --weight weight.hdf5 --output ./weight --batch 128 --epoch 20 --sample 1000
+python3 train_network_generator.py --dataset ./dataset/ --label ./label.txt --model ./model.json --weight weight.hdf5 --output ./weight --batch 128 --epoch 20
 ```
 
 
